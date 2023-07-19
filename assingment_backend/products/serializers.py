@@ -1,17 +1,29 @@
+import json
 from rest_framework import serializers
 
-from .models import *
+from .models import  Category, Product
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    childrens = serializers.SerializerMethodField()
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name','parent_category','childrens']
     
     
     def create(self, validated_data):
         category = Category.objects.create(**validated_data)
         return category
+    
+    def get_childrens(self, instance):
+        childrens = instance.children_category.all()
+        child = []
+        child_dict ={}
+        for c in childrens:
+            child_dict['id'] = c.id
+            child_dict['name'] = c.name
+            child.append(child_dict)
+        return child
 
 
     

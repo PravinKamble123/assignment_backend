@@ -52,6 +52,16 @@ def get_category_by_id(request, pk):
     except Category.DoesNotExist:
         return Response("category not found")
     
+@api_view(['GET'])
+def get_childrens(request, pk):
+    try:
+        category = Category.objects.get(id=pk)
+    except Category.DoesNotExist:
+        return Response('not found !', status=status.HTTP_404_NOT_FOUND)
+        childrens = category.children_category.all()
+        serializer = CategorySerializer(childrens, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 
 @api_view(['DELETE'])
